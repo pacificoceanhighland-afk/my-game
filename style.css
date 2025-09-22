@@ -1,0 +1,38 @@
+body {
+  background: #222;
+  color: #fff;
+  font-family: sans-serif;
+  text-align: center;
+}
+
+canvas {
+  background: #000;
+  margin-top: 20px;
+  border: 2px solid white;
+}
+
+#messageBox {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 300px;
+  padding: 10px 15px;
+  background: rgba(0,0,0,0.85);
+  color: #fff;
+  font-family: sans-serif;
+  border-radius: 10px;
+  display: none;
+  box-shadow: 0 0 10px #000;
+}
+
+#messageBox::after {
+  content: "";
+  position: absolute;
+  bottom: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-width: 10px 10px 0 10px;
+  border-style: solid;
+  border-color: rgba(0,0,0,0.85) transparent transparent transparent;
+}
