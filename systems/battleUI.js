@@ -4,7 +4,6 @@ window.battleUI = {
   attackTimeout: null,
 
   init() {
-    // 戦闘画面の親要素を作成
     this.container = document.createElement("div");
     this.container.id = "battleScreen";
     Object.assign(this.container.style, {
@@ -55,15 +54,17 @@ window.battleUI = {
   },
 
   show(enemy) {
-    this.currentEnemy = { ...enemy }; // 現在の敵を保持
+    // currentEnemy に元のオブジェクトを直接セット
+    this.currentEnemy = enemy;
+
     document.getElementById("gameCanvas").style.display = "none";
     this.container.style.display = "flex";
 
-    document.getElementById("battleEnemyName").textContent = enemy.name || enemy.id;
+    document.getElementById("battleEnemyName").textContent = enemy.name;
     document.getElementById("battleEnemyImage").src = enemy.img || "images/defaultEnemy.png";
 
     this.updateDisplay();
-    document.getElementById("battleLog").textContent = `${enemy.name || enemy.id} が現れた！`;
+    document.getElementById("battleLog").textContent = `${enemy.name} が現れた！`;
   },
 
   hide() {
@@ -87,11 +88,11 @@ window.battleUI = {
       `HP: ${playerStatus.hp} / ${playerStatus.maxHp}`;
   },
 
-  // プレイヤー攻撃
   playerAttack() {
     if (!this.currentEnemy || playerStatus.hp <= 0) return;
 
-    const dmg = Math.floor(Math.random() * playerStatus.totalAttack) + 1;
+    // プレイヤー攻撃（防御考慮 optional）
+    const dmg = Math.max(0, Math.floor(Math.random() * playerStatus.totalAttack) - this.currentEnemy.defense || 0) + 1;
     this.currentEnemy.hp -= dmg;
     if (this.currentEnemy.hp < 0) this.currentEnemy.hp = 0;
 
@@ -105,15 +106,13 @@ window.battleUI = {
       return;
     }
 
-    // 敵反撃
     this.attackTimeout = setTimeout(() => this.enemyAttack(), 800);
   },
 
-  // 敵の反撃
   enemyAttack() {
     if (!this.currentEnemy || this.currentEnemy.hp <= 0) return;
 
-    const dmg = Math.floor(Math.random() * this.currentEnemy.attack) + 1;
+    const dmg = Math.max(0, Math.floor(Math.random() * this.currentEnemy.attack) - playerStatus.totalDefense) + 1;
     playerStatus.hp -= dmg;
     if (playerStatus.hp < 0) playerStatus.hp = 0;
 
@@ -121,12 +120,9 @@ window.battleUI = {
     document.getElementById("battleLog").textContent =
       `${this.currentEnemy.name} の攻撃！ あなたは ${dmg} のダメージを受けた！`;
 
-    if (playerStatus.hp <= 0) {
-      this.endBattle("lose");
-    }
+    if (playerStatus.hp <= 0) this.endBattle("lose");
   },
 
-  // 戦闘終了
   endBattle(result) {
     if (this.attackTimeout) clearTimeout(this.attackTimeout);
 
