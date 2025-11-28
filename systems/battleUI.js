@@ -48,14 +48,14 @@ window.battleUI = {
 
     document.body.appendChild(this.container);
 
-    // ボタンイベント
     document.getElementById("attackButton").onclick = () => this.playerAttack();
     document.getElementById("runButton").onclick = () => this.endBattle("run");
   },
 
   show(enemy) {
-    // currentEnemy に元のオブジェクトを直接セット
-    this.currentEnemy = enemy;
+    // 敵データのコピーを作成して maxHp を保持
+    this.currentEnemy = { ...enemy };
+    if (!this.currentEnemy.maxHp) this.currentEnemy.maxHp = this.currentEnemy.hp;
 
     document.getElementById("gameCanvas").style.display = "none";
     this.container.style.display = "flex";
@@ -91,8 +91,9 @@ window.battleUI = {
   playerAttack() {
     if (!this.currentEnemy || playerStatus.hp <= 0) return;
 
-    // プレイヤー攻撃（防御考慮 optional）
-    const dmg = Math.max(0, Math.floor(Math.random() * playerStatus.totalAttack) - this.currentEnemy.defense || 0) + 1;
+    const enemyDef = this.currentEnemy.defense || 0;
+    const dmg = Math.max(1, Math.floor(Math.random() * playerStatus.totalAttack) - enemyDef);
+
     this.currentEnemy.hp -= dmg;
     if (this.currentEnemy.hp < 0) this.currentEnemy.hp = 0;
 
@@ -112,7 +113,9 @@ window.battleUI = {
   enemyAttack() {
     if (!this.currentEnemy || this.currentEnemy.hp <= 0) return;
 
-    const dmg = Math.max(0, Math.floor(Math.random() * this.currentEnemy.attack) - playerStatus.totalDefense) + 1;
+    const playerDef = playerStatus.totalDefense || 0;
+    const dmg = Math.max(1, Math.floor(Math.random() * this.currentEnemy.attack) - playerDef);
+
     playerStatus.hp -= dmg;
     if (playerStatus.hp < 0) playerStatus.hp = 0;
 
@@ -133,7 +136,6 @@ window.battleUI = {
       playerStatus.gainExp(this.currentEnemy.exp || 10);
       playerStatus.heal(5);
 
-      // マップから敵削除
       if (currentMap.enemies) {
         const index = currentMap.enemies.findIndex(
           e => e.id === this.currentEnemy.id && e.x === this.currentEnemy.x && e.y === this.currentEnemy.y
