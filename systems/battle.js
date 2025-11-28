@@ -1,11 +1,9 @@
-// --- battle.js ---
-
 window.startBattle = function(enemy) {
   console.log(`${enemy.id} が現れた！`);
   battleUI.show(enemy);
 };
 
-// --- プレイヤー攻撃 ---
+// プレイヤー攻撃
 window.battleUI.playerAttack = function() {
   if (!this.currentEnemy || playerStatus.hp <= 0) return;
 
@@ -25,12 +23,14 @@ window.battleUI.playerAttack = function() {
   this.attackTimeout = setTimeout(() => this.enemyAttack(), 800);
 };
 
-// --- 敵の反撃 ---
+// 敵の反撃
 window.battleUI.enemyAttack = function() {
   if (!this.currentEnemy || this.currentEnemy.hp <= 0) return;
 
   const dmg = Math.floor(Math.random() * this.currentEnemy.attack) + 1;
   playerStatus.hp -= dmg;
+  if (playerStatus.hp < 0) playerStatus.hp = 0;
+
   this.updateDisplay();
   document.getElementById("battleLog").textContent =
     `${this.currentEnemy.name} の攻撃！ あなたは ${dmg} のダメージを受けた！`;
@@ -40,7 +40,7 @@ window.battleUI.enemyAttack = function() {
   }
 };
 
-// --- 戦闘終了 ---
+// 戦闘終了
 window.battleUI.endBattle = function(result) {
   if (this.attackTimeout) clearTimeout(this.attackTimeout);
 
@@ -58,7 +58,6 @@ window.battleUI.endBattle = function(result) {
       );
       if (index !== -1) currentMap.enemies.splice(index, 1);
     }
-
   } else if (result === "run") {
     log.textContent = "逃げ出した…！";
   } else if (result === "lose") {
@@ -67,11 +66,10 @@ window.battleUI.endBattle = function(result) {
     return;
   }
 
-  // 数秒後に戦闘画面を消す
   setTimeout(() => this.hide(), result === "win" ? 600 : 1500);
 };
 
-// --- ゲームオーバー ---
+// ゲームオーバー
 function showGameOver() {
   const overDiv = document.createElement("div");
   overDiv.id = "gameOverScreen";
