@@ -77,16 +77,82 @@ window.battleUI = {
   updateDisplay() {
     if (!this.currentEnemy) return;
 
-    // HPバー更新
     const enemyPercent = Math.max(0, this.currentEnemy.hp / this.currentEnemy.maxHp) * 100;
     const playerPercent = Math.max(0, playerStatus.hp / playerStatus.maxHp) * 100;
 
     document.getElementById("enemyHpFill").style.width = enemyPercent + "%";
     document.getElementById("playerHpFill").style.width = playerPercent + "%";
 
-    // テキスト表示
     document.getElementById("battlePlayerStatus").textContent =
       `HP: ${playerStatus.hp} / ${playerStatus.maxHp}`;
+  },
+
+  // プレイヤー攻撃
+  playerAttack() {
+    if (!this.currentEnemy || playerStatus.hp <= 0) return;
+
+    const dmg = Math.floor(Math.random() * playerStatus.totalAttack) + 1;
+    this.currentEnemy.hp -= dmg;
+    if (this.currentEnemy.hp < 0) this.currentEnemy.hp = 0;
+
+    this.updateDisplay();
+    document.getElementById("battleLog").textContent =
+      `${this.currentEnemy.name} に ${dmg} のダメージ！`;
+
+    if (this.currentEnemy.hp <= 0) {
+      if (this.attackTimeout) clearTimeout(this.attackTimeout);
+      this.endBattle("win");
+      return;
+    }
+
+    // 敵反撃
+    this.attackTimeout = setTimeout(() => this.enemyAttack(), 800);
+  },
+
+  // 敵の反撃
+  enemyAttack() {
+    if (!this.currentEnemy || this.currentEnemy.hp <= 0) return;
+
+    const dmg = Math.floor(Math.random() * this.currentEnemy.attack) + 1;
+    playerStatus.hp -= dmg;
+    if (playerStatus.hp < 0) playerStatus.hp = 0;
+
+    this.updateDisplay();
+    document.getElementById("battleLog").textContent =
+      `${this.currentEnemy.name} の攻撃！ あなたは ${dmg} のダメージを受けた！`;
+
+    if (playerStatus.hp <= 0) {
+      this.endBattle("lose");
+    }
+  },
+
+  // 戦闘終了
+  endBattle(result) {
+    if (this.attackTimeout) clearTimeout(this.attackTimeout);
+
+    const log = document.getElementById("battleLog");
+
+    if (result === "win") {
+      log.textContent = "敵を倒した！";
+      playerStatus.gainExp(this.currentEnemy.exp || 10);
+      playerStatus.heal(5);
+
+      // マップから敵削除
+      if (currentMap.enemies) {
+        const index = currentMap.enemies.findIndex(
+          e => e.id === this.currentEnemy.id && e.x === this.currentEnemy.x && e.y === this.currentEnemy.y
+        );
+        if (index !== -1) currentMap.enemies.splice(index, 1);
+      }
+    } else if (result === "run") {
+      log.textContent = "逃げ出した…！";
+    } else if (result === "lose") {
+      log.textContent = "力尽きた……";
+      showGameOver();
+      return;
+    }
+
+    setTimeout(() => this.hide(), result === "win" ? 600 : 1500);
   }
 };
 
