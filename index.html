@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>2D RPG</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <h1>言語の精髄による遊戯の誕生（仮）</h1>
+
+  <div id="statusWindow"></div>
+  <div id="itemWindow" class="hidden"></div>
+
+  <canvas id="gameCanvas" width="900" height="450"></canvas>
+
+  <div id="npcMessageBox" class="messageBox topBox">
+    <div id="npcNameBox" class="nameBox"></div>
+    <div id="npcMessageText" class="textBox"></div>
+    <div id="choiceBox" class="choice-box"></div>
+  </div>
+  <img id="npcImage" src="" alt="npc" />
+  <div id="npcStillLine" class="npc-still-line"></div>
+
+  <div id="playerMessageBox" class="messageBox bottomBox">
+    <div id="playerNameBox" class="nameBox"></div>
+    <div id="playerMessageText" class="textBox"></div>
+  </div>
+
+  <img id="playerImage" src="" alt="player" style="display:none;">
+
+<script src="maps/kingRoom.js"></script>
+<script src="maps/palaceInside.js"></script>
+<script src="maps/palaceOutside.js"></script>
+<script src="maps/castleTown1.js"></script>
+<script src="maps/itemShop.js"></script>
+<script src="maps/castleTown2.js"></script>
+<script src="maps/castleTown3.js"></script>
+<script src="maps/sacredArea1.js"></script>
+<script src="maps/templeInside.js"></script>
+<script src="maps/sacredArea2.js"></script>
+<script src="maps/labyrinth1.js"></script>
+<script src="maps/labyrinth2.js"></script>
+<script src="maps/labyrinth3.js"></script>
+<script src="maps/labyrinth4.js"></script>
+<script src="maps/labyrinth5.js"></script>
+
+<script src="data/playerStatus.js"></script>
+<script src="data/items.js"></script>
+<script src="data/npc.js"></script>    <script src="data/enemies.js"></script>
+
+<script src="systems/skill.js"></script>
+<script src="systems/battleUI.js"></script>
+<script src="systems/battle.js"></script>
+<script src="systems/checkEnemyCollision.js"></script>
+<script src="systems/mapTransitions.js"></script> <script src="systems/dialogue.js"></script>
+<script src="systems/shop.js"></script>
+<script src="systems/choices.js"></script>
+<script src="systems/draw.js"></script>         <script src="systems/input.js"></script>        <script src="systems/status.js"></script>       <script src="systems/items.js"></script>
+
+
+<script src="party.js"></script>
+
+<script src="game.js"></script>
+
+</body>
+</html>
